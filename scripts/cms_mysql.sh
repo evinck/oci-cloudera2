@@ -98,9 +98,8 @@ systemctl enable krb5kdc.service >> $LOG_FILE
 systemctl enable kadmin.service >> $LOG_FILE
 
 EXECNAME="Cloudera Manager & Pre-Reqs Install"
-yum install cloudera-manager-server java-1.8.0-openjdk.x86_64 python-pip nscd -y >> $LOG_FILE
-pip install psycopg2==2.7.5 --ignore-installed >> $LOG_FILE
-yum install oracle-j2sdk1.8.x86_64 cloudera-manager-daemons cloudera-manager-agent -y >> $LOG_FILE
+yum install cloudera-manager-server -y >> $LOG_FILE
+yum install cloudera-manager-daemons -y >> $LOG_FILE
 cp /etc/cloudera-scm-agent/config.ini /etc/cloudera-scm-agent/config.ini.orig
 sed -e "s/\(server_host=\).*/\1${cm_fqdn}/" -i /etc/cloudera-scm-agent/config.ini
 #export JDK=`ls /usr/lib/jvm | head -n 1`
@@ -125,7 +124,7 @@ systemctl enable mysqld
 systemctl start mysqld
 
 log "->Bootstrap Databases"
-mysql_pw=` cat /var/log/mysqld.log | grep root@localhost | gawk '{print $13}'`
+mysql_pw=` cat /var/log/mysql/mysqld.log | grep root@localhost | gawk '{print $13}'`
 echo -e "$mysql_pw" >> /etc/mysql/mysql_root.pw
 mysql -u root --connect-expired-password -p${mysql_pw} -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'S0m3p@ssw1234';"
 mysql -u root --connect-expired-password -p${mysql_pw} -e "FLUSH PRIVILEGES;"
