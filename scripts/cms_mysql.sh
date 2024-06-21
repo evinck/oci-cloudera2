@@ -116,15 +116,14 @@ create_random_password()
 
 EXECNAME="MySQL DB"
 log "->Install"
-wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
-rpm -ivh mysql-community-release-el7-5.noarch.rpm
 yum install mysql-server -y
 log "->Tuning"
-wget https://raw.githubusercontent.com/oracle-quickstart/oci-cloudera/master/scripts/my.cnf
+wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/my.cnf
 mv my.cnf /etc/my.cnf
 log "->Start"
 systemctl enable mysqld
 systemctl start mysqld
+
 log "->Bootstrap Databases"
 mysql_pw=` cat /var/log/mysqld.log | grep root@localhost | gawk '{print $13}'`
 echo -e "$mysql_pw" >> /etc/mysql/mysql_root.pw
@@ -161,12 +160,7 @@ done;
 sed -i 's/\\//g' /etc/mysql/cloudera.sql
 mysql -u root -p${mysql_pw} < /etc/mysql/cloudera.sql
 mysql -u root -p${mysql_pw} -e "FLUSH PRIVILEGES"
-log "->Java Connector"
-wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
-tar zxvf mysql-connector-java-5.1.46.tar.gz
-mkdir -p /usr/share/java/
-cd mysql-connector-java-5.1.46
-cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar	
+
 log "->SCM Prepare DB"
 for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
 	log "-->${user} preparation"
@@ -215,107 +209,7 @@ case $i in
         31) disk="oraclevdag";;
 esac
 }
-iscsi_setup() {
-        log "-> ISCSI Volume Setup - Volume $i : IQN ${iqn[$n]}"
-        iscsiadm -m node -o new -T ${iqn[$n]} -p 169.254.2.${n}:3260
-        log "--> Volume ${iqn[$n]} added"
-        iscsiadm -m node -o update -T ${iqn[$n]} -n node.startup -v automatic
-        log "--> Volume ${iqn[$n]} startup set"
-        iscsiadm -m node -T ${iqn[$n]} -p 169.254.2.${n}:3260 -l
-        log "--> Volume ${iqn[$n]} done"
-}
-iscsi_target_only(){
-        log "-->Logging into Volume ${iqn[$n]}"
-        iscsiadm -m node -T ${iqn[$n]} -p 169.254.2.${n}:3260 -l
-}
-EXECNAME="ISCSI"
-done="0"
-log "-- Detecting Block Volumes --"
-for i in `seq 2 33`; do
-        if [ $done = "0" ]; then
-                iscsiadm -m discoverydb -D -t sendtargets -p 169.254.2.${i}:3260 2>&1 2>/dev/null
-                iscsi_chk=`echo -e $?`
-                if [ $iscsi_chk = "0" ]; then
-                        iqn[$i]=`iscsiadm -m discoverydb -D -t sendtargets -p 169.254.2.${i}:3260 | gawk '{print $2}'`
-                        log "-> Discovered volume $((i-1)) - IQN: ${iqn[$i]}"
-                        continue
-                else
-                        log "--> Discovery Complete - ${#iqn[@]} volumes found"
-                        done="1"
-                fi
-        fi
-done;
-log "-- Setup for ${#iqn[@]} Block Volumes --"
-if [ ${#iqn[@]} -gt 0 ]; then 
-	for i in `seq 1 ${#iqn[@]}`; do
-		n=$((i+1))
-		iscsi_setup
-	done;
-fi
-EXECNAME="DISK PROVISIONING"
-data_mount () {
-  log "-->Mounting /dev/$disk to /data$dcount"
-  mkdir -p /data$dcount
-  mount -o noatime,barrier=1 -t ext4 /dev/$disk /data$dcount
-  UUID=`blkid /dev/$disk | cut -d '"' -f 2`
-  echo "UUID=$UUID   /data$dcount    ext4   defaults,noatime,discard,barrier=0 0 1" | tee -a /etc/fstab
-}
-block_data_mount () {
-  log "-->Mounting /dev/oracleoci/$disk to /data$dcount"
-  mkdir -p /data$dcount
-  mount -o noatime,barrier=1 -t ext4 /dev/oracleoci/$disk /data$dcount
-  UUID=`blkid /dev/oracleoci/$disk | cut -d '"' -f 2`
-  echo "UUID=$UUID   /data$dcount    ext4   defaults,_netdev,nofail,noatime,discard,barrier=0 0 2" | tee -a /etc/fstab
-}
-log "->Checking for disks..."
-dcount=0
-for disk in `cat /proc/partitions | grep nv`; do
-        log "-->Processing /dev/$disk"
-        mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 /dev/$disk
-        data_mount
-        dcount=$((dcount+1))
-done;
-if [ ${#iqn[@]} -gt 0 ]; then
-for i in `seq 1 ${#iqn[@]}`; do
-	n=$((i+1))
-        dsetup="0"
-        while [ $dsetup = "0" ]; do
-                vol_match
-                log "-->Checking /dev/oracleoci/$disk"
-                if [ -h /dev/oracleoci/$disk ]; then
-                        mke2fs -F -t ext4 -b 4096 -E lazy_itable_init=1 -O sparse_super,dir_index,extent,has_journal,uninit_bg -m1 /dev/oracleoci/$disk
-                        if [ $disk = "oraclevdb" ]; then
-                                log "--->Mounting /dev/oracleoci/$disk to /var/log/cloudera"
-                                mkdir -p /var/log/cloudera
-                                mount -o noatime,barrier=1 -t ext4 /dev/oracleoci/$disk /var/log/cloudera
-                                echo "/dev/oracleoci/oraclevdb   /var/log/cloudera    ext4   defaults,_netdev,nofail,noatime,discard,barrier=0 0 2" | tee -a /etc/fstab
-                        elif [ $disk = "oraclevdc" ]; then
-                                log "--->Mounting /dev/oracleoci/$disk to /opt/cloudera"
-				if [ -d /opt/cloudera ]; then
-		                        mv /opt/cloudera /opt/cloudera_pre
-                		        mkdir -p /opt/cloudera
-		                        mount -o noatime,barrier=1 -t ext4 /dev/oracleoci/$disk /opt/cloudera
-		                        mv /opt/cloudera_pre/* /opt/cloudera
-                		        rm -fR /opt/cloudera_pre
-		                else
-                		        mkdir -p /opt/cloudera
-		                        mount -o noatime,barrier=1 -t ext4 /dev/oracleoci/$disk /opt/cloudera
-		                fi
-                                echo "/dev/oracleoci/oraclevdc   /opt/cloudera    ext4   defaults,_netdev,nofail,noatime,discard,barrier=0 0 2" | tee -a /etc/fstab
-                        else
-                                block_data_mount
-                                dcount=$((dcount+1))
-                        fi
-                        /sbin/tune2fs -i0 -c0 /dev/oracleoci/$disk
-                        dsetup="1"
-                else
-                        log "--->${disk} not found, running ISCSI setup again."
-                        iscsi_target_only
-                        sleep 5
-                fi
-        done;
-done;
-fi
+
 EXECNAME="Cloudera Manager"
 log "->Starting Cloudera Manager"
 chown -R cloudera-scm:cloudera-scm /etc/cloudera-scm-server
@@ -359,6 +253,11 @@ fi
 if [ ${debug} = "true" ]; then
 	XOPTS="${XOPTS} -D"
 fi
+
+
+wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/deploy_on_oci.py
+mv deploy_on_oci.py /var/lib/cloud/instance/scripts/deploy_on_oci.py
+
 log "---> python /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS}"
 python /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS} 2>&1 >> $LOG_FILE	
 log "->DONE"
