@@ -1,0 +1,720 @@
+title: Sample input variable schema
+schemaVersion: 1.1.0
+version: "2020311"
+locale: "en"
+groupings:
+- title: "SSH Key"
+  variables:
+  - ${provide_ssh_key}
+  - ${ssh_provided_key}
+- title: "Availabilty Domain"
+  variables:
+  - ${availability_domain}
+- title: "VCN Options"
+  variables:
+  - ${useExistingVcn}
+  - ${myVcn}
+  - ${hide_public_subnet}
+  - ${hide_private_subnet}
+  - ${vcn_dns_label}
+  - ${custom_cidrs}
+  - ${VPC_CIDR}
+  - ${edge_cidr}
+  - ${public_cidr}
+  - ${private_cidr}
+- title: "Cloudera Options"
+  variables:
+  - ${cm_username}
+  - ${cm_password}
+  - ${cm_version}
+  - ${cloudera_version}
+  - ${cluster_name}
+  - ${secure_cluster}
+  - ${hdfs_ha}
+  - ${AdvancedOptions}
+  - ${enable_debug}
+  - ${log_volume_size_in_gbs}
+  - ${cloudera_volume_size_in_gbs}
+  - ${svc_HBASE}
+  - ${svc_HDFS}
+  - ${svc_HIVE}
+  - ${svc_IMPALA}
+  - ${svc_KAFKA}
+  - ${svc_OOZIE}
+  - ${svc_SOLR}
+  - ${svc_SPARK_ON_YARN}
+  - ${svc_SQOOP_CLIENT}
+  - ${svc_YARN}
+  - ${vcore_ratio}
+  - ${yarn_scheduler}
+- title: "Advanced CDP Options"
+  variables: 
+  - ${svc_ATLAS}
+  - ${svc_RANGER}
+  - ${rangeradmin_password} 
+  visible: 
+    and:
+      - ${AdvancedOptions}
+      - and:
+        - eq:
+          - ${cloudera_version}
+          - "7.1.1.0"
+        - and:
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.10.2.5"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.11.2.4"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.12.2.4"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.13.3.2"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.14.4.3"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.15.2.3"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "5.16.2.8"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.0.0"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.0.1"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.1.0"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.1.1"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.2.0"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.2.1"
+          - not:
+            - eq:
+              - ${cloudera_version}
+              - "6.3.2"
+- title: "Worker Node Options"
+  variables:
+  - ${worker_instance_shape}
+  - ${worker_node_count}
+  - ${objectstoreRAID}
+  - ${enable_block_volumes}
+  - ${block_volumes_per_worker}
+  - ${data_blocksize_in_gbs}
+  - ${customize_block_volume_performance}
+  - ${block_volume_high_performance}
+  - ${block_volume_cost_savings}
+  - ${clusterSubnet}
+  - ${enable_secondary_vnic}
+  - ${blockvolume_cidr}
+  - ${blockvolumeSubnet}
+- title: "Master Node Options"
+  variables:
+  - ${master_instance_shape}
+  - ${master_node_count}
+  - ${nn_volume_size_in_gbs}
+- title: "Utility Node Options"
+  variables:
+  - ${utility_instance_shape}
+  - ${utilitySubnet}
+  - ${meta_db_type}
+- title: "Edge Node Options"
+  variables:
+  - ${use_edge_nodes}
+  - ${bastion_instance_shape}
+  - ${bastion_node_count}
+  - ${bastionSubnet}
+- title: "Pre-Defined"
+  variables:
+  - ${region}
+  - ${compartment_ocid}
+  - ${tenancy_ocid}
+  - ${CentOSImageOCID}
+  - ${OELImageOCID}
+  - ${oci_service_gateway}
+  - ${AD}
+  - ${vpus_per_gb}
+  - ${secondary_vnic_count}
+  - ${blockvolume_subnet_id}
+  - ${worker_domain}
+  visible: false
+
+variables:
+  cm_version:
+    type: enum
+    enum:
+    - "6.0.0"
+    - "6.0.1"
+    - "6.1.0"
+    - "6.2.0"
+    - "6.3.0"
+    - "6.3.1"
+    - "7.1.1"
+    title: "Cloudera Manager Version"
+    description: "Choose the version of Cloudera Manager to deploy, CDP requires 7.1.1"
+    required: true
+    default: "7.1.1"
+
+  cloudera_version:
+    type: enum
+    enum:
+    - "5.10.2.5"
+    - "5.11.2.4"
+    - "5.12.2.4"
+    - "5.13.3.2"
+    - "5.14.4.3"
+    - "5.15.2.3"
+    - "5.16.2.8"
+    - "6.0.0"
+    - "6.0.1"
+    - "6.1.0"
+    - "6.1.1"
+    - "6.2.0"
+    - "6.2.1"
+    - "6.3.2"
+    - "7.1.1.0"
+    title: "Cluster Version"
+    description: "Choose the version of CDH to deploy, for CDP choose 7.1.1.0"
+    required: true
+    default: "7.1.1.0"
+
+  cluster_name:
+    type: string
+    title: "Cluster Name"
+    description: "Name your Cluster"
+    required: true
+
+  useExistingVcn:
+    type: boolean 
+    title: "Use Existing VCN"
+    description: "Click to use existing VCN, otherwise VCN and Subnets will be created"
+    required: true
+    default: false
+
+  myVcn:
+    type: oci:core:vcn:id
+    title: "Existing VCN"
+    description: "Select Existing VCN"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible: ${useExistingVcn}
+    required: true
+
+  custom_cidrs:
+    type: boolean
+    title: "Customize Network CIDRS"
+    description: "Click to customize CIDR ranges, only applicable when creating VCN as part of deployment"
+    required: true
+    default: false
+     
+  utilitySubnet:
+    type: oci:core:subnet:id
+    title: "Utility Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePrivateSubnet: ${hide_private_subnet}
+    visible: ${useExistingVcn}
+    required: true
+
+  clusterSubnet:
+    type: oci:core:subnet:id
+    title: "Cluster Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePublicSubnet: ${hide_public_subnet}
+    visible: ${useExistingVcn}
+    required: true
+
+  bastionSubnet:
+    type: oci:core:subnet:id
+    title: "Utility Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePrivateSubnet: ${hide_private_subnet}
+    visible: ${useExistingVcn}
+    required: true 
+
+  blockvolumeSubnet:
+    type: oci:core:subnet:id
+    title: "BlockVolume Subnet"
+    description: "Select Subnet - Ensure the Subnet is in the same Availability Domain selected above"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${myVcn}
+      hidePublicSubnet: ${hide_public_subnet}
+    visible:
+      and:
+        - ${useExistingVcn}
+        - ${enable_secondary_vnic}
+    required: true
+
+  hide_private_subnet:
+    type: boolean
+    title: "Deploy Utility & Edge hosts to Public Networks"
+    description: "If you wish to deploy to private networks and use VPN, un-check this"
+    default: true
+    visible: ${useExistingVcn}
+
+  hide_public_subnet:
+    type: boolean
+    title: "Deploy Cluster to Private Network Only"
+    description: "This is highly suggested, disable at your own risk"
+    default: true
+    visible: ${useExistingVcn}
+
+  availability_domain:
+    type: oci:identity:availabilitydomain:name 
+    title: "Availability Domain"
+    description: "Select AD"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    required: true
+
+  secure_cluster:
+    type: Boolean
+    title: "Kerberos Security"
+    description: "Click to Enable Kerberos for Secure Cluster"
+    required: true
+
+  hdfs_ha:
+    type: boolean 
+    title: "High Availability"
+    description: "Click to Enable HDFS High Availability"
+    required: true
+
+  worker_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64"
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    - "BM.HPC2.36"
+    title: "Shape of Worker Nodes"
+    required: true
+
+  worker_node_count:
+    type: integer
+    minimum: 3
+    title: "Number of Worker Nodes"
+    description: "3 is the minimum requirement"
+    required: true
+
+  master_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64" 
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    - "BM.HPC2.36"
+    title: "Shape of Master Nodes"
+    required: true
+
+  master_node_count:
+    type: integer
+    minimum: 2
+    title: "Number of Master Nodes"
+    description: "2 is the minimum requirement"
+    required: true
+
+  utility_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64"
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    - "BM.HPC2.36"
+    title: "Shape of Utility Node"
+    required: true
+
+  bastion_instance_shape:
+    type: enum
+    enum:
+    - "VM.Standard2.1"
+    - "VM.Standard.E2.1"
+    - "VM.Standard2.2"
+    - "VM.Standard.E2.2"
+    - "VM.Standard2.4"
+    - "VM.Standard.E2.4"
+    - "VM.Standard2.8"
+    - "VM.Standard.E2.8"
+    - "VM.Standard2.16"
+    - "VM.Standard2.24"
+    - "VM.Standard.E2.1"
+    - "VM.Standard.E2.2"
+    - "VM.Standard.E2.4"
+    - "VM.Standard.E2.8"
+    - "BM.Standard2.52"
+    - "BM.Standard.E2.64"
+    - "VM.DenseIO2.8"
+    - "VM.DenseIO2.16"
+    - "VM.DenseIO2.24"
+    - "BM.DenseIO2.52"
+    title: "Shape of Edge Nodes"
+    required: true
+    visible: ${use_edge_nodes}
+
+  bastion_node_count:
+    type: integer
+    title: "Number of Edge Nodes"
+    description: "Enter a number, 0 to service limit of shape"
+    minimum: 0
+    required: true
+    visible: ${use_edge_nodes}
+
+  ssh_provided_key:
+    type: string
+    title: "SSH Public Key"
+    description: "Copy/Paste the contents of your SSH Public Key"
+    required: true
+    default: ""
+    visible: ${provide_ssh_key}
+
+  data_blocksize_in_gbs:
+    type: integer
+    title: "HDFS Block Volume Size ( GB )"
+    description: "700 to 32,768 "
+    minimum: 700
+    maximum: 32768
+    required: true
+    visible: ${enable_block_volumes}
+
+  block_volumes_per_worker:
+    type: integer
+    title: "Number of Block Volumes for HDFS"
+    description: "0 to 29"
+    minimum: 0 
+    maximum: 29
+    required: true
+    visible: ${enable_block_volumes} 
+
+  customize_block_volume_performance:
+    type: boolean
+    title: "Custom Block Volume Performance"
+    description: "Click to customize Block Volume performance.  Default profile is Balanced. When enabled, only select one sub-option."
+    default: false
+    visible: ${enable_block_volumes}
+
+  block_volume_high_performance:
+    type: boolean
+    title: "High Performance Block Volumes"
+    description: "Click to enable High Performance for HDFS Block Volumes.  This comes at a higher cost per GB."
+    default: false
+    visible: 
+      and:
+        - ${enable_block_volumes}
+        - ${customize_block_volume_performance}
+
+  block_volume_cost_savings:
+    type: boolean
+    title: "Lower Cost Block Volumes"
+    description: "Click to enable Lower Cost for HDFS Block Volumes.  This lowers performance for cost savings per GB."
+    default: false
+    visible:
+      and:
+        - ${enable_block_volumes}
+        - ${customize_block_volume_performance}
+
+  nn_volume_size_in_gbs:
+    type: integer
+    title: "Block Volume Size for NameNode Metadata"
+    description: "500 to 32,768"
+    minimum: 500
+    maximum: 32768
+    required: true
+    visible: ${enable_block_volumes}
+
+  log_volume_size_in_gbs:
+    type: integer
+    title: "Volume size in GB for CDH Logs"
+    description: "50 to 32,768"
+    minimum: 50
+    maximum: 32768
+    required: true
+    visible: ${AdvancedOptions}
+
+  cloudera_volume_size_in_gbs:
+    type: integer
+    title: "Volume size in GB for CDH Data (Parcels)"
+    description: "150 to 32,768"
+    minimum: 150
+    maximum: 32768
+    required: true
+    visible: ${AdvancedOptions}
+  
+  VPC_CIDR:
+    type: string
+    title: "VPC CIDR for VCN"
+    description: "Customize VCN top level CIDR"
+    visible: ${custom_cidrs}
+
+  edge_cidr:
+    type: string
+    title: "Edge Subnet CIDR"
+    description: "Customize Edge Subnet CIDR, ensure this fits in VCN CIDR range."
+    visible: ${custom_cidrs}
+
+  public_cidr:
+    type: string
+    title: "Public Subnet CIDR"
+    description: "Customize Public Subnet CIDR, ensure this fits in VCN CIDR range."
+    visible: ${custom_cidrs}
+
+  private_cidr:
+    type: string
+    title: "Private Subnet CIDR"
+    description: "Customize Private Subnet CIDR, ensure this fits in VCN CIDR range."
+    visible: ${custom_cidrs}
+
+  blockvolume_cidr:
+    type: string
+    title: "BlockVolume Subnet CIDR"
+    description: "Customize BlockVolume Subnet CIDR, ensure this fits in VCN CIDR range.  This subnet is used on BM hosts to segregate storage network traffic from cluster traffic."
+    visible:
+      and:
+        - ${custom_cidrs}
+        - ${enable_secondary_vnic}
+
+  vcn_dns_label:
+    type: string
+    title: "VCN DNS Label"
+    description: "Set the VCN DNS label to be used when creating VCN.  Default is 'clouderavcn' which sets the VCN domain to 'clouderavcn.oraclevcn.com'"
+
+  objectstoreRAID:
+    type: boolean
+    title: "RAID0 Block Volume Cache"
+    description: "Enable RAID0 Block Volume cache to enhance througput when moving data to/from Object Storage.  This is recommended when using DistCP."
+    default: false
+
+  meta_db_type:
+    type: enum
+    title: "Cloudera Manager Database"
+    description: "Pick which database to use for Cloudera Manager.   Note that Postgresql is not recommended for production clusters."
+    enum:
+    - "mysql"
+    - "postgres"
+    required: true
+    visible: ${AdvancedOptions}
+
+  use_edge_nodes:
+    type: boolean
+    title: "Enable Edge Nodes"
+    description: "Check to enable Edge Nodes for the cluster."
+    default: false
+
+  enable_block_volumes:
+    type: boolean
+    title: "Enable Block Volumes for HDFS"
+    description: "Check to enable Block Volumes for use with HDFS. This is optional for BM.Dense hosts, required for all others."
+    default: true 
+
+  cm_username:
+    type: string
+    title: "Cloudera Manager Admin"
+    description: "Set the admin username, it must be something other than the default."
+    required: true
+
+  cm_password:
+    type: password
+    title: "Cloudera Manager Admin Password"
+    description: "Set the Admin user default password, do not use spaces as this password is not sanitized.  This will be used for deployment, it is encouraged you change this after deployment is complete."
+    required: true
+
+  provide_ssh_key:
+    type: boolean
+    title: "Provide SSH Key"
+    description: "Un-Check to generate SSH key as part of deployment process.  This is NOT recommended for persistent environments, you should provide your own key for any production deployment."
+
+  vcore_ratio:
+    type: int
+    title: "YARN VCore Ratio"
+    description: "Set the YARN VCore ratio.  This is typically between 1-4.  VMs benefit from a smaller VCore ratio, BMs benefit from a higher VCore ratio."
+    min: 1
+    max: 4
+    default: 2
+    visible: ${AdvancedOptions}
+
+  AdvancedOptions:
+    type: boolean
+    title: "Advanced Options" 
+    description: "Enable Advanced Cluster Configuration Options.  For advanced users only, changing service parameters may have a negative impact on cluster deployment, modify at your own risk.  These parameters only affect initial cluster build, once the cluster is deployed Cloudera Manager must be used for service administration."
+
+  svc_ATLAS:
+    type: boolean
+    title: "Atlas Service"
+    description: "Enable Atlas Service, CDP ONLY"
+ 
+  svc_HBASE:
+    type: boolean
+    title: "HBase Service"
+    description: "Enable HBase Service"
+    visible: ${AdvancedOptions}
+
+  svc_HDFS:
+    type: boolean
+    title: "HDFS Service"
+    description: "Enable HDFS Service"
+    visible: ${AdvancedOptions}
+
+  svc_HIVE:
+    type: boolean
+    title: "Hive Service"
+    description: "Enable Hive Service"
+    visible: ${AdvancedOptions}
+
+  svc_IMPALA:
+    type: boolean
+    title: "Impala Service"
+    description: "Enable Impala Service"
+    visible: ${AdvancedOptions}
+
+  svc_KAFKA:
+    type: boolean
+    title: "Kafka Service"
+    description: "Enable Kafa Service"
+    visible: ${AdvancedOptions}
+
+  svc_OOZIE:
+    type: boolean
+    title: "Oozie Service"
+    description: "Enable Oozie Service"
+    visible: ${AdvancedOptions}
+
+  svc_RANGER:
+    type: boolean
+    title: "Ranger Service"
+    description: "Enable Ranger Service, CDP ONLY"
+
+  rangeradmin_password:
+    type: string
+    title: "Password for Ranger"
+    description: "Sets default deployment password for rangeradmin, usersync, tagsync, and keystore.  Password requires upper case, numbers  and special character, if this is not set properly then deployment may fail."
+    visible: ${svc_RANGER}
+
+  svc_SOLR:
+    type: boolean
+    title: "SOLR Service"
+    description: "Enable SOLR Service"
+    visible: ${AdvancedOptions}
+
+  svc_SPARK_ON_YARN:
+    type: boolean
+    title: "Spark on YARN Service"
+    description: "Enable Spark on YARN Service"
+    visible: ${AdvancedOptions}
+
+  svc_SQOOP_CLIENT:
+    type: boolean
+    title: "Sqoop Client"
+    description: "Enable Sqoop Client"
+    visible: ${AdvancedOptions}
+
+  svc_YARN:
+    type: boolean
+    title: "YARN Service"
+    description: "Enable YARN Service"
+    visible: ${AdvancedOptions}
+
+  enable_debug:
+    type: boolean
+    title: "Enable debug Output"
+    description: "Enable debug output for python deployment script.  Output is found in /var/log/cloudera-OCI-initialize.log"
+    visible: ${AdvancedOptions}
+
+  yarn_scheduler:
+    type: enum
+    enum:
+    - "fair"
+    - "fifo"
+    - "capacity"
+    title: "YARN Scheduler"
+    description: "Select YARN Scheduler type"
+    visible: ${AdvancedOptions}
+
+  enable_secondary_vnic:
+    type: boolean
+    title: "Enable Secondary VNIC"
+    description: "Enable a second VNIC on the second physical interface for BM hosts.   This will be used for cluster traffic, allowing the primary interface to be used for storage."
+    visible:
+      or:
+        - or:
+          - eq:
+            - ${worker_instance_shape}
+            - "BM.Standard2.52"
+          - eq:
+            - ${worker_instance_shape}
+            - "BM.DenseIO2.52"
+        - or:
+          - eq:
+            - ${worker_instance_shape}
+            - "BM.HPC2.36"
+          - eq:
+            - ${worker_instance_shape}
+            - "BM.Standard.E2.64"

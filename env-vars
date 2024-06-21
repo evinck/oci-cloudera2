@@ -1,0 +1,48 @@
+# Terraform location
+export PATH=/home/evinck/Documents/PCA_Cloudera_Revival/Terraform:$PATH
+
+### Authentication details
+export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaafipe4lmow7rfrn5f3egpg3xgur6v2q2wgvb3id4ehwujnpu5mb5q"
+export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaqkqk547hknghhwbfasfjoyikocn2vwug6xnzkl6tera4p7mc4sza"
+export TF_VAR_fingerprint="b0:dc:fa:0a:35:c3:ab:eb:c7:04:94:dd:6a:31:c7:40"
+export TF_VAR_private_key_path="/home/evinck/.oci/oscemea001_eric.vinck-03-30-13-53.pem"
+
+### Region
+export TF_VAR_region="eu-frankfurt-1"
+
+### Compartment
+export TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaa6x2v7se3kddb2nhwakhzz5evd2iidwmnuk7f4zeg3k4hnslc3n4q"
+
+### Public/private keys used on the instance
+export TF_VAR_ssh_provided_key=$(cat /home/evinck/.ssh/id_rsa.pub)
+export TF_VAR_ssh_private_key=$(cat /home/evinck/.ssh/id_rsa)
+
+## AD
+export TF_VAR_availability_domain="mofr:eu-frankfurt-1-ad-1"
+
+## Customize the shape to be used for Bastion Host
+# export TF_VAR_BastionInstanceShape="VM.Standard.E4.Flex"
+export TF_VAR_bastion_instance_shape="VM.Standard.E4.Flex"
+export TF_VAR_bastion_instance_ocpus="2"
+
+## Customize the shape to be used for Master Hosts
+# export TF_VAR_MasterInstanceShape="VM.Standard.E4.Flex"
+export TF_VAR_master_instance_shape="VM.Standard.E4.Flex"
+export TF_VAR_master_instance_ocpus="2"
+
+## Customize the shape to be used for Utility Hosts
+# export TF_VAR_UtilityInstanceShape="VM.Standard.E4.Flex"
+export TF_VAR_utility_instance_shape="VM.Standard.E4.Flex"
+export TF_VAR_utility_instance_ocpus="2"
+
+## Customize the shape to be used for Worker Hosts
+# export TF_VAR_WorkerInstanceShape="VM.Standard.E4.Flex"
+export TF_VAR_worker_instance_shape="VM.Standard.E4.Flex"
+export TF_VAR_worker_instance_ocpus="2"
+
+## Set the number of Worker Nodes - this allows N-Node scaling for Workers
+export TF_VAR_worker_node_count="3"
+
+## Cloudera Manager versions
+export TF_VAR_cm_version="7.11.13"
+export TF_VAR_cloudera_version="7.1.9"
