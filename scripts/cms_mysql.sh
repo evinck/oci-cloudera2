@@ -124,11 +124,11 @@ systemctl enable mysqld
 systemctl start mysqld
 
 log "->Bootstrap Databases"
-mysql_pw=` cat /var/log/mysql/mysqld.log | grep root@localhost | gawk '{print $13}'`
-echo -e "$mysql_pw" >> /etc/mysql/mysql_root.pw
-mysql -u root --connect-expired-password -p${mysql_pw} -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'S0m3p@ssw1234';"
-mysql -u root --connect-expired-password -p${mysql_pw} -e "FLUSH PRIVILEGES;"
+# mysql_pw=` cat /var/log/mysql/mysqld.log | grep root@localhost | gawk '{print $13}'`
+# echo -e "$mysql_pw" >> /etc/mysql/mysql_root.pw
+mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'S0m3p@ssw1234';"
 mysql_pw="S0m3p@ssw1234"
+mysql -u root -p${mysql_pw} -e "FLUSH PRIVILEGES;"
 mysql -u root -p${mysql_pw} -e "SET GLOBAL validate_password.policy=LOW;"
 mysql -u root -p${mysql_pw} -e "SET GLOBAL log_bin_trust_function_creators = 1;"
 mkdir -p /etc/mysql
@@ -161,6 +161,7 @@ mysql -u root -p${mysql_pw} < /etc/mysql/cloudera.sql
 mysql -u root -p${mysql_pw} -e "FLUSH PRIVILEGES"
 
 log "->SCM Prepare DB"
+cp /usr/share/java/mysql-connector-java.jar /opt/cloudera/cm/lib/
 for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
 	log "-->${user} preparation"
 	pw=`cat /etc/mysql/mysql.pw | grep -w $user | cut -d ':' -f 2`
@@ -173,41 +174,6 @@ for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
 	fi
 	/opt/cloudera/cm/schema/scm_prepare_database.sh mysql ${database} ${user} ${pw}
 done;
-vol_match() {
-case $i in
-        1) disk="oraclevdb";;
-        2) disk="oraclevdc";;
-        3) disk="oraclevdd";;
-        4) disk="oraclevde";;
-        5) disk="oraclevdf";;
-        6) disk="oraclevdg";;
-        7) disk="oraclevdh";;
-        8) disk="oraclevdi";;
-        9) disk="oraclevdj";;
-        10) disk="oraclevdk";;
-        11) disk="oraclevdl";;
-        12) disk="oraclevdm";;
-        13) disk="oraclevdn";;
-        14) disk="oraclevdo";;
-        15) disk="oraclevdp";;
-        16) disk="oraclevdq";;
-        17) disk="oraclevdr";;
-        18) disk="oraclevds";;
-        19) disk="oraclevdt";;
-        20) disk="oraclevdu";;
-        21) disk="oraclevdv";;
-        22) disk="oraclevdw";;
-        23) disk="oraclevdx";;
-        24) disk="oraclevdy";;
-        25) disk="oraclevdz";;
-        26) disk="oraclevdab";;
-        27) disk="oraclevdac";;
-        28) disk="oraclevdad";;
-        29) disk="oraclevdae";;
-        30) disk="oraclevdaf";;
-        31) disk="oraclevdag";;
-esac
-}
 
 EXECNAME="Cloudera Manager"
 log "->Starting Cloudera Manager"
@@ -257,6 +223,6 @@ fi
 wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/deploy_on_oci.py
 mv deploy_on_oci.py /var/lib/cloud/instance/scripts/deploy_on_oci.py
 
-log "---> python /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS}"
-python /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS} 2>&1 >> $LOG_FILE	
+log "---> python3.8 /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS}"
+python3.8 /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS} 2>&1 >> $LOG_FILE	
 log "->DONE"
