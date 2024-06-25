@@ -172,6 +172,8 @@ for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
 	else
 		database=${user}
 	fi
+        wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/scm_prepare_database.sh -O /opt/cloudera/cm/schema/scm_prepare_database.sh
+        chmod a+rx /opt/cloudera/cm/schema/scm_prepare_database.sh
 	/opt/cloudera/cm/schema/scm_prepare_database.sh mysql ${database} ${user} ${pw}
 done;
 
@@ -181,9 +183,9 @@ chown -R cloudera-scm:cloudera-scm /etc/cloudera-scm-server
 systemctl start cloudera-scm-server
 EXECNAME="Cloudera ${cloudera_version}"
 log "->Installing Python Pre-reqs"
-sudo yum install python python-pip -y >> $LOG_FILE
-sudo pip install --upgrade pip >> $LOG_FILE
-sudo pip install cm_client >> $LOG_FILE
+# yum install python3.8 python38-pip -y >> $LOG_FILE
+# pip install --upgrade pip >> $LOG_FILE
+python3.8 -m pip install cm_client >> $LOG_FILE
 log "->Running Cluster Deployment"
 log "-->Host Discovery"
 detection_flag="0"
