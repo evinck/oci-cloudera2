@@ -381,7 +381,7 @@ def build_disk_lists(disk_count, data_tiering, nvme_disks):
             nvme_disks = 2
         if worker_shape == 'VM.DenseIO2.8':
             nvme_disks = 1
-	half_disk_count=int(round(float(int(nvme_disks)/2)))
+        half_disk_count=int(round(float(int(nvme_disks)/2)))
     elif 'HPC' in worker_shape:
         nvme_disks = 1
         half_disk_count = 0
