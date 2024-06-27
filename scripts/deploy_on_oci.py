@@ -90,19 +90,12 @@ def get_parameter_value(worker_shape, parameter):
         "VM.Standard2.24:worker_memory_mb": "327680",
         "VM.Standard2.16:worker_memory_mb": "245760",
         "VM.Standard2.8:worker_memory_mb": "122880",
-        "VM.Standard2.4:worker_memory_mb": "61440",
-        "VM.Standard2.2:worker_memory_mb": "30720",
-        "VM.Standard2.1:worker_memory_mb": "15360",
         "VM.Standard.E2.8:worker_memory_mb": "65536",
         "VM.DenseIO2.8:worker_memory_mb": "122880",
         "VM.DenseIO2.16:worker_memory_mb": "245760",
         "VM.DenseIO2.24:worker_memory_mb": "327680",
-        "VM.Standard.E2.1:worker_memory_mb": "7860",
-        "VM.Standard.E2.2:worker_memory_mb": "15360",
-        "VM.Standard.E2.4:worker_memory_mb": "30720",
-        "VM.Standard.E2.8:worker_memory_mb": "61440"
     }
-    return switcher.get(worker_shape + ":" + parameter, "30720")
+    return switcher.get(worker_shape + ":" + parameter, "122880")
 
 def build_api_endpoints(user_name, password):
     """
@@ -381,7 +374,7 @@ def build_disk_lists(disk_count, data_tiering, nvme_disks):
             nvme_disks = 2
         if worker_shape == 'VM.DenseIO2.8':
             nvme_disks = 1
-        half_disk_count=int(round(float(int(nvme_disks)/2)))
+            half_disk_count=int(round(float(int(nvme_disks)/2)))
     elif 'HPC' in worker_shape:
         nvme_disks = 1
         half_disk_count = 0
@@ -904,7 +897,7 @@ def update_cluster_rcg_configuration(cluster_service_list):
                     r = 1
                     for host_id in worker_host_ids:
                         create_role(rcg, rcg_roletype, service, host_id, worker_hostnames[n], (n + 1))
-			r_id = '/rack' + str(r)
+                        r_id = '/rack' + str(r)
                         body = cm_client.ApiHost(host_id, rack_id=r_id)
                         try:
                             api_response = hr_api.update_host(host_id, body=body)
@@ -913,8 +906,7 @@ def update_cluster_rcg_configuration(cluster_service_list):
 
                         except ApiException as e:
                             print("Exception when calling HostsResourceApi->update_host: %s\n" % e)
-                            
-			if r == 3:
+                        if r == 3:
                             r = 1
                         else:
                             r = r + 1
@@ -1326,7 +1318,7 @@ def update_cluster_rcg_configuration(cluster_service_list):
                     p_rcg(rcg)
                     rcg_roletype = 'SERVER'
                     maxclientcnxns = [cm_client.ApiConfig(name='maxClientCnxns', value='1024')]
-		    maxSessionTimeout = [cm_client.ApiConfig(name='maxSessionTimeout', value='60000')]
+                    maxSessionTimeout = [cm_client.ApiConfig(name='maxSessionTimeout', value='60000')]
                     datalogdir = [cm_client.ApiConfig(name='dataLogDir', value=LOG_DIR + '/zookeeper')]
                     datadir = [cm_client.ApiConfig(name='dataDir', value=LOG_DIR + '/zookeeper')]
                     zk_server_log_dir = [cm_client.ApiConfig(name='zk_server_log_dir', value=LOG_DIR + '/zookeeper')]
@@ -1923,7 +1915,7 @@ def options_parser(args=None):
     meta_db_type = options.meta_db_type
     yarn_scheduler = options.yarn_scheduler
     if yarn_scheduler == 'fair':
-	yarn_scheduler = 'org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler'
+        yarn_scheduler = 'org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler'
         yarn_rm_preemption = 'false'
     elif yarn_scheduler == 'fifo':
         yarn_scheduler = 'org.apache.hadoop.yarn.server.resourcemanager.scheduler.fifo.FifoScheduler'
@@ -1944,16 +1936,15 @@ def options_parser(args=None):
         kafka_parcel_url = ' '
         api_version='v40'
     elif cluster_primary_version == '6':
-	remote_parcel_url = 'https://archive.cloudera.com/cdh6/' + options.cloudera_version + '/parcels'  # type: str
-	kafka_parcel_url = ' '
+        remote_parcel_url = 'https://archive.cloudera.com/cdh6/' + options.cloudera_version + '/parcels'  # type: str
+        kafka_parcel_url = ' '
         api_version='v31'
     else:
-	remote_parcel_url = 'https://archive.cloudera.com/cdh5/parcels/' + options.cloudera_version  #type: str
+        remote_parcel_url = 'https://archive.cloudera.com/cdh5/parcels/' + options.cloudera_version  # type: str
         if options.cloudera_version.split('.')[2] >= '13':
-                kafka_version = '4.1.0.4'
-	else:
-                kafka_version = '2.2.0.68'
-
+            kafka_version = '4.1.0.4'
+        else:
+            kafka_version = '2.2.0.68'
         kafka_parcel_url = 'https://archive.cloudera.com/kafka/parcels/' + kafka_version  # type: str
         api_version='v31'
     if not options.cm_server:
@@ -1989,7 +1980,7 @@ def options_parser(args=None):
     worker_vcpu = int(round(float(worker_vcpu[worker_shape_length-1])*float(options.vcore_ratio)))
     cluster_service_list = options.cluster_services.split(",")
     if options.rangeradmin_password:
-	ranger_service = "True"  # type: bool
+        ranger_service = "True"  # type: bool
     else:
         ranger_service = "False"  # type: bool
 
