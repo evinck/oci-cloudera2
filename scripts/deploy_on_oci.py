@@ -78,7 +78,7 @@ s3a_config = s3a_endpoint_config + s3a_access_key_config + s3a_secret_key_config
 api_cluster_name = cm_client.ApiClusterRef(cluster_name, cluster_name)  # type: str
 java_version = subprocess.Popen("ls /usr/lib/jvm/ | grep java", shell=True,
                                 stdout=subprocess.PIPE).stdout.read().rstrip()
-java_home = '/usr/lib/jvm/' + java_version + '/jre/'  # type: str
+java_home = '/usr/lib/jvm/' + str(java_version) + '/jre/'  # type: str
 
 def get_parameter_value(worker_shape, parameter):
     switcher = {
@@ -385,7 +385,7 @@ def build_disk_lists(disk_count, data_tiering, nvme_disks):
         if nvme_disks >= 1:
             disk_count = nvme_disks
         for x in range(0, int(disk_count)):
-            if x is 0:
+            if x == 0:
                 dfs_data_dir_list += "/data%d/dfs/dn" % x
                 yarn_data_dir_list += "/data%d/yarn/nm" % x
             else:
@@ -395,7 +395,7 @@ def build_disk_lists(disk_count, data_tiering, nvme_disks):
     if data_tiering == 'True':
         total_disk_count = int(disk_count) + nvme_disks
         for x in range(0, int(total_disk_count)):
-            if x is 0:
+            if x == 0:
                 dfs_data_dir_list += "[DISK]/data%d/dfs/dn" % x
                 yarn_data_dir_list += "/data%d/yarn/nm" % x
             elif x < nvme_disks:
@@ -1976,8 +1976,17 @@ def options_parser(args=None):
             sys.exit()
     worker_memory_mb = get_parameter_value(options.worker_shape, 'worker_memory_mb')
     worker_vcpu = options.worker_shape.split(".")
+    # TODO : handle the case of VM.Standard.E4.Flex
     worker_shape_length = len(worker_vcpu)
-    worker_vcpu = int(round(float(worker_vcpu[worker_shape_length-1])*float(options.vcore_ratio)))
+
+
+    print("debug " + worker_vcpu[worker_shape_length-1] + " " + options.vcore_ratio)
+
+    worker_vcpu_num = worker_vcpu[worker_shape_length-1]
+    if worker_vcpu_num == 'Flex':
+        worker_vcpu_num = 2
+
+    worker_vcpu = int(round(float(worker_vcpu_num)*float(options.vcore_ratio)))
     cluster_service_list = options.cluster_services.split(",")
     if options.rangeradmin_password:
         ranger_service = "True"  # type: bool
