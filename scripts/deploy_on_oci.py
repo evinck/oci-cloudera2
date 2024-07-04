@@ -109,6 +109,7 @@ def build_api_endpoints(user_name, password):
     api_host = 'http://' + cm_server
     global api_url, api_client
     api_url = api_host + ':' + cm_port + '/api/' + api_version
+    print("debug : " + api_url)
     api_client = cm_client.ApiClient(api_url)
     global clusters_api, users_api, cloudera_manager_api, parcels_api, parcel_api, \
         cluster_services_api, auth_roles_api, roles_config_api, all_hosts_api, \
@@ -1934,7 +1935,8 @@ def options_parser(args=None):
     if cluster_primary_version == '7':
         remote_parcel_url = 'https://archive.cloudera.com/cdh7/' + options.cloudera_version + '/parcels'  # type: str
         kafka_parcel_url = ' '
-        api_version='v40'
+        # api_version='v40'
+        api_version='v54'
     elif cluster_primary_version == '6':
         remote_parcel_url = 'https://archive.cloudera.com/cdh6/' + options.cloudera_version + '/parcels'  # type: str
         kafka_parcel_url = ' '
@@ -2033,6 +2035,7 @@ def build_cloudera_cluster(cluster_primary_version):
 
         build_cluster_host_list(host_fqdn_list)
         read_cluster()
+        time.sleep(10)
         add_hosts_to_cluster(cluster_host_list)
         active_command = '\tHosts Adding to Cluster ' + cluster_name
         wait_for_active_cluster_commands(active_command)
