@@ -142,7 +142,7 @@ variable "secure_cluster" {
 }
 
 variable "hdfs_ha" {
-    default = "False"
+    default = "true"
 }
 
 variable "worker_instance_shape" {
@@ -265,7 +265,7 @@ variable "AdvancedOptions" {
 }
 
 variable "svc_ATLAS" { 
-  default = "false"
+  default = "true"
 }
 
 variable "svc_HBASE" {
@@ -293,7 +293,7 @@ variable "svc_OOZIE" {
 }
 
 variable "svc_RANGER" {
-  default = "false"
+  default = "true"
 }
 
 variable "svc_SOLR" {

@@ -76,8 +76,6 @@ default_realm = ${REALM}
         key_stash_file = /var/kerberos/krb5kdc/stash
         max_life = 10h 0m 0s
         max_renewable_life = 7d 0h 0m 0s
-        master_key_type = des3-hmac-sha1
-        supported_enctypes = rc4-hmac:normal 
         default_principal_flags = +preauth
     }
 EOF
@@ -154,7 +152,7 @@ for DATABASE in "scm" "amon" "rman" "hue" "metastore" "sentry" "nav" "navms" "oo
 	echo -e "CREATE DATABASE ${DATABASE} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" >> /etc/mysql/cloudera.sql
 	echo -e "CREATE USER \'${USER}\'@'%' IDENTIFIED BY \'${pw}\';" >> /etc/mysql/cloudera.sql
 	echo -e "GRANT ALL on ${DATABASE}.* to \'${USER}\'@'%';" >> /etc/mysql/cloudera.sql
-        echo "${USER}:${pw}" >> /etc/mysql/mysql.pw
+    echo "${USER}:${pw}" >> /etc/mysql/mysql.pw
 done;
 sed -i 's/\\//g' /etc/mysql/cloudera.sql
 mysql -u root -p${mysql_pw} < /etc/mysql/cloudera.sql

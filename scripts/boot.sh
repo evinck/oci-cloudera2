@@ -121,8 +121,11 @@ EOF
 
 EXECNAME="TUNING"
 log "->OS"
+# echo never > /sys/kernel/mm/transparent_hugepage/defrag
 echo never | tee -a /sys/kernel/mm/transparent_hugepage/enabled
+echo never | tee -a /sys/kernel/mm/transparent_hugepage/defrag
 echo "echo never | tee -a /sys/kernel/mm/transparent_hugepage/enabled" | tee -a /etc/rc.local
+echo "echo never | tee -a /sys/kernel/mm/transparent_hugepage/defrag" | tee -a /etc/rc.local
 echo vm.swappiness=1 | tee -a /etc/sysctl.conf
 echo 1 | tee /proc/sys/vm/swappiness
 echo net.ipv4.tcp_timestamps=0 >> /etc/sysctl.conf

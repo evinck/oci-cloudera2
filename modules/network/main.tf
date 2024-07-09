@@ -89,7 +89,17 @@ resource "oci_core_security_list" "PublicSubnet" {
 
   egress_security_rules {
     destination = "0.0.0.0/0"
-    protocol    = "6"
+    protocol    = "all"
+  }
+
+  ingress_security_rules {
+    tcp_options {
+      max = 7183
+      min = 7183
+    }
+
+    protocol = "6"
+    source   = "0.0.0.0/0"
   }
 
   ingress_security_rules {
@@ -101,6 +111,7 @@ resource "oci_core_security_list" "PublicSubnet" {
     protocol = "6"
     source   = "0.0.0.0/0"
   }
+
   ingress_security_rules {
     tcp_options {
       max = 18088
@@ -129,7 +140,7 @@ resource "oci_core_security_list" "PublicSubnet" {
     source   = "0.0.0.0/0"
   }
   ingress_security_rules {
-    protocol = "6"
+    protocol = "all"
     source   = "${var.VPC_CIDR}"
   }
 }
@@ -142,15 +153,15 @@ resource "oci_core_security_list" "PrivateSubnet" {
 
   egress_security_rules {
     destination = "0.0.0.0/0"
-    protocol    = "6"
+    protocol    = "all"
   }
   egress_security_rules {
-    protocol    = "6"
+    protocol    = "all"
     destination = "${var.VPC_CIDR}"
   }
 
   ingress_security_rules {
-    protocol = "6"
+    protocol = "all"
     source   = "${var.VPC_CIDR}"
   }
 }
