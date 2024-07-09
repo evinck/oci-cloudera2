@@ -152,7 +152,7 @@ for DATABASE in "scm" "amon" "rman" "hue" "metastore" "sentry" "nav" "navms" "oo
 	echo -e "CREATE DATABASE ${DATABASE} DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" >> /etc/mysql/cloudera.sql
 	echo -e "CREATE USER \'${USER}\'@'%' IDENTIFIED BY \'${pw}\';" >> /etc/mysql/cloudera.sql
 	echo -e "GRANT ALL on ${DATABASE}.* to \'${USER}\'@'%';" >> /etc/mysql/cloudera.sql
-    echo "${USER}:${pw}" >> /etc/mysql/mysql.pw
+    echo "${DATABASE}:${USER}:${pw}" >> /etc/mysql/mysql.pw
 done;
 sed -i 's/\\//g' /etc/mysql/cloudera.sql
 mysql -u root -p${mysql_pw} < /etc/mysql/cloudera.sql
@@ -177,6 +177,7 @@ done;
 
 EXECNAME="Cloudera Manager"
 log "->Starting Cloudera Manager"
+echo 'export CMF_JAVA_OPTS="-Xmx4G -XX:MaxPermSize=1G"' >> /etc/default/cloudera-scm-server
 chown -R cloudera-scm:cloudera-scm /etc/cloudera-scm-server
 systemctl start cloudera-scm-server
 EXECNAME="Cloudera ${cloudera_version}"
