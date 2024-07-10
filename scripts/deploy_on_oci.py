@@ -45,7 +45,7 @@ kdc_admin = 'cloudera-scm@HADOOP.COM'
 kdc_password = 'somepassword'
 # Set port number for Cloudera Manager - used to build API endpoints and check if CM is up/listening
 # Only modify if you customized the Cloudera Manager deployment to use a non-standard port
-cm_port = '7180'
+cm_port = '7183'
 # Distribution rate for remote repo
 parcel_distribution_rate = "1024000"  # type: int
 # Management Roles List
@@ -106,7 +106,8 @@ def build_api_endpoints(user_name, password):
     """
     cm_client.configuration.username = user_name
     cm_client.configuration.password = password
-    api_host = 'http://' + cm_server
+    cm_client.configuration.verify_ssl = False
+    api_host = 'https://' + cm_server
     global api_url, api_client
     api_url = api_host + ':' + cm_port + '/api/' + api_version
     print("debug : " + api_url)
@@ -247,8 +248,9 @@ def init_admin_user():
     """
     cm_client.configuration.username = 'admin'
     cm_client.configuration.password = 'admin'
-    api_host = 'http://' + cm_server
-    port = '7180'
+    cm_client.configuration.verify_ssl = False
+    api_host = 'https://' + cm_server
+    port = '7183'
     api_url = api_host + ':' + port + '/api/' + api_version
     api_client = cm_client.ApiClient(api_url)
 
