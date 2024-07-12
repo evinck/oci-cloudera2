@@ -18,6 +18,7 @@ import argparse
 import socket
 import os
 import subprocess
+import codecs
 
 start_time = time.time()
 # Global Parameter Defaults - These are passed to the script, do not modify
@@ -78,7 +79,7 @@ s3a_config = s3a_endpoint_config + s3a_access_key_config + s3a_secret_key_config
 api_cluster_name = cm_client.ApiClusterRef(cluster_name, cluster_name)  # type: str
 java_version = subprocess.Popen("ls /usr/lib/jvm/ | grep java", shell=True,
                                 stdout=subprocess.PIPE).stdout.read().rstrip()
-java_home = '/usr/lib/jvm/' + str(java_version) + '/jre/'  # type: str
+java_home = '/usr/lib/jvm/' + java_version.decode() + '/jre/'  # type: str
 
 def get_parameter_value(worker_shape, parameter):
     switcher = {
