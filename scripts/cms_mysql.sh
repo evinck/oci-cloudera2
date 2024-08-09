@@ -179,7 +179,8 @@ EXECNAME="Cloudera Manager"
 log "->Starting Cloudera Manager"
 echo 'export CMF_JAVA_OPTS="-Xmx4G -XX:MaxPermSize=1G"' >> /etc/default/cloudera-scm-server
 chown -R cloudera-scm:cloudera-scm /etc/cloudera-scm-server
-sed -e 's/NEED_AGENT_VALIDATION true/NEED_AGENT_VALIDATION false/g' cm_init.txt > /var/lib/cloudera-scm-server/certmanager/cm_init.txt
+cp -p /var/lib/cloudera-scm-server/certmanager/cm_init.txt /var/lib/cloudera-scm-server/certmanager/cm_init.txt.ori
+sed -e 's/NEED_AGENT_VALIDATION true/NEED_AGENT_VALIDATION false/g' /var/lib/cloudera-scm-server/certmanager/cm_init.txt.ori > /var/lib/cloudera-scm-server/certmanager/cm_init.txt
 chown cloudera-scm:cloudera-scm /var/lib/cloudera-scm-server/certmanager/cm_init.txt
 systemctl start cloudera-scm-server
 EXECNAME="Cloudera ${cloudera_version}"
