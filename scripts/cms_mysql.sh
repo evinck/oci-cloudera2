@@ -164,16 +164,10 @@ cp /usr/share/java/mysql-connector-java.jar /opt/cloudera/cm/lib/
 wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/scm_prepare_database.sh -O /opt/cloudera/cm/schema/scm_prepare_database.sh
 chmod a+rx /opt/cloudera/cm/schema/scm_prepare_database.sh
 
-for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
+for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $2}'`; do
 	log "-->${user} preparation"
 	pw=`cat /etc/mysql/mysql.pw | grep -w $user | cut -d ':' -f 3`
-	if [ $user = "hive" ]; then 
-		database="metastore"
-	elif [ $user = "rangeradmin" ]; then
-		database="ranger"
-	else
-		database=${user}
-	fi
+	database=`cat /etc/mysql/mysql.pw | grep -w $user | cut -d ':' -f 1`
 	/opt/cloudera/cm/schema/scm_prepare_database.sh mysql ${database} ${user} ${pw}
 done;
 
