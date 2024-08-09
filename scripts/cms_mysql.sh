@@ -166,7 +166,7 @@ chmod a+rx /opt/cloudera/cm/schema/scm_prepare_database.sh
 
 for user in `cat /etc/mysql/mysql.pw | gawk -F ':' '{print $1}'`; do
 	log "-->${user} preparation"
-	pw=`cat /etc/mysql/mysql.pw | grep -w $user | cut -d ':' -f 2`
+	pw=`cat /etc/mysql/mysql.pw | grep -w $user | cut -d ':' -f 3`
 	if [ $user = "hive" ]; then 
 		database="metastore"
 	elif [ $user = "rangeradmin" ]; then
