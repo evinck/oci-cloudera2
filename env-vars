@@ -45,4 +45,4 @@ export TF_VAR_worker_node_count="3"
 
 ## Cloudera Manager versions
 export TF_VAR_cm_version="7.11.13"
-export TF_VAR_cloudera_version="7.1.9"
+export TF_VAR_cloudera_version="7.1.8"
