@@ -385,7 +385,9 @@ EXECNAME="Python 3.8 installation"
 yum remove python3 -y >> $LOG_FILE
 yum install python3.8 -y >> $LOG_FILE
 
-EXECNAME="Cloudera Agent Install"
+# Agent install must be done manually
+
+# EXECNAME="Cloudera Agent Install"
 # if [ ${cm_major_version} = "7" ]; then
 #        log "-->CDP install detected - CM $cm_version"
 #       rpm --import https://archive.cloudera.com/cm${cm_major_version}/${cm_version}/redhat7/yum/RPM-GPG-KEY-cloudera
@@ -396,21 +398,22 @@ EXECNAME="Cloudera Agent Install"
 #        wget http://archive.cloudera.com/cm${cm_major_version}/${cm_version}/redhat7/yum/cloudera-manager.repo -O /etc/yum.repos.d/cloudera-manager.repo
 #fi
 
-wget https://d753ce7b-f010-4314-b074-1de8bc5a105f:618bf3e66162@archive.cloudera.com/p/cm7/7.11/redhat8/yum/cloudera-manager.repo -O /etc/yum.repos.d/cloudera-manager.repo
+# wget https://d753ce7b-f010-4314-b074-1de8bc5a105f:618bf3e66162@archive.cloudera.com/p/cm7/7.11/redhat8/yum/cloudera-manager.repo -O /etc/yum.repos.d/cloudera-manager.repo
 
-yum install cloudera-manager-agent -y >> $LOG_FILE
-export JDK=`ls /usr/lib/jvm | head -n 1`
-sudo JAVA_HOME=/usr/lib/jvm/$JDK/jre/ /opt/cloudera/cm-agent/bin/certmanager setup --configure-services
-cp /etc/cloudera-scm-agent/config.ini /etc/cloudera-scm-agent/config.ini.orig
-sed -e "s/\(server_host=\).*/\1${cm_fqdn}/" -i /etc/cloudera-scm-agent/config.ini
-sed -e "s/use_tls=0/use_tls=1/" -i /etc/cloudera-scm-agent/config.ini
+# yum install cloudera-manager-agent -y >> $LOG_FILE
+# export JDK=`ls /usr/lib/jvm | head -n 1`
+# sudo JAVA_HOME=/usr/lib/jvm/$JDK/jre/ /opt/cloudera/cm-agent/bin/certmanager setup --configure-services
+# cp /etc/cloudera-scm-agent/config.ini /etc/cloudera-scm-agent/config.ini.orig
+# sed -e "s/\(server_host=\).*/\1${cm_fqdn}/" -i /etc/cloudera-scm-agent/config.ini
+# sed -e "s/use_tls=0/use_tls=1/" -i /etc/cloudera-scm-agent/config.ini
 
-if [ ${enable_secondary_vnic} = "true" ]; then 
-	agent_hostname=`curl -L http://169.254.169.254/opc/v1/instance/metadata/agent_hostname`
-	sed -i 's,# listening_hostname=,'"listening_hostname=${agent_hostname}"',g' /etc/cloudera-scm-agent/config.ini
-	agent_ip=`host ${agent_hostname} | gawk '{print $4}'`
-	sed -i 's,# listening_ip=,'"listening_ip=${agent_ip}"',g' /etc/cloudera-scm-agent/config.ini
-fi
-systemctl start cloudera-scm-agent
+# if [ ${enable_secondary_vnic} = "true" ]; then 
+# 	agent_hostname=`curl -L http://169.254.169.254/opc/v1/instance/metadata/agent_hostname`
+# 	sed -i 's,# listening_hostname=,'"listening_hostname=${agent_hostname}"',g' /etc/cloudera-scm-agent/config.ini
+# 	agent_ip=`host ${agent_hostname} | gawk '{print $4}'`
+# 	sed -i 's,# listening_ip=,'"listening_ip=${agent_ip}"',g' /etc/cloudera-scm-agent/config.ini
+# fi
+# systemctl start cloudera-scm-agent
+
 EXECNAME="END"
 log "->DONE"

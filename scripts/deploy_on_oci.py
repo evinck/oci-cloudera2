@@ -51,7 +51,11 @@ cm_port = '7183'
 parcel_distribution_rate = "1024000"  # type: int
 # Management Roles List
 # REPORTSMANAGER, NAVIGATOR, NAVIGATORMETASERVER are only available with Licensed Cloudera Manager Enterprise Edition.
-mgmt_roles_list = ['ACTIVITYMONITOR', 'ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR']
+# mgmt_roles_list = ['ACTIVITYMONITOR', 'ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR']
+
+# Starting with 7.0 ACTIVITYMONITOR is not supported / deprecated
+mgmt_roles_list = ['ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR','REPORTSMANAGER','TELEMETRYPUBLISHER']
+
 # Cluster Host Mapping
 # Used to prescriptively generate a host topology, only modify if hostnames are altered from Terraform
 worker_hosts_prefix = 'cloudera-worker'

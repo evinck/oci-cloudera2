@@ -226,6 +226,9 @@ fi
 wget https://raw.githubusercontent.com/evinck/oci-cloudera2/master/scripts/deploy_on_oci.py
 mv deploy_on_oci.py /var/lib/cloud/instance/scripts/deploy_on_oci.py
 
+
+log "---> EXECUTE the hosts adding from the UI and then launch the CMD below :"
+
 log "---> python3.8 /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS}"
-python3.8 /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS} 2>&1 >> $LOG_FILE	
+#python3.8 /var/lib/cloud/instance/scripts/deploy_on_oci.py -m ${cm_ip} -i ${fqdn_list} -d ${worker_disk_count} -w ${worker_shape} -n ${num_workers} -cdh ${cloudera_version} -N ${cluster_name} -a ${cm_username} -p ${cm_password} -v ${vcore_ratio} -C ${service_list} -M mysql -Y ${yarn_scheduler} ${XOPTS} 2>&1 >> $LOG_FILE	
 log "->DONE"
