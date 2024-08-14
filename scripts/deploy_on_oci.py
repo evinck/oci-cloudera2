@@ -54,7 +54,8 @@ parcel_distribution_rate = "1024000"  # type: int
 # mgmt_roles_list = ['ACTIVITYMONITOR', 'ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR']
 
 # Starting with 7.0 ACTIVITYMONITOR is not supported / deprecated
-mgmt_roles_list = ['ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR','REPORTSMANAGER','TELEMETRYPUBLISHER']
+# mgmt_roles_list = ['ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR','REPORTSMANAGER','TELEMETRYPUBLISHER']
+mgmt_roles_list = ['ALERTPUBLISHER', 'EVENTSERVER', 'HOSTMONITOR', 'SERVICEMONITOR']
 
 # Cluster Host Mapping
 # Used to prescriptively generate a host topology, only modify if hostnames are altered from Terraform
@@ -892,10 +893,13 @@ def update_cluster_rcg_configuration(cluster_service_list):
                                                                           value='1257242624')]
                     dfs_datanode_max_xcievers = [cm_client.ApiConfig(name='dfs_datanode_max_xcievers', value='16384')]
                     datanode_log_dir = [cm_client.ApiConfig(name='datanode_log_dir', value=LOG_DIR + '/dn')]
+                    dfs_datanode_failed_volumes_tolerated = [cm_client.ApiConfig(name='dfs_datanode_failed_volumes_tolerated', value='1')]
+                    
                     dn_config_list = [dfs_data_dir, datanode_java_heapsize,
                                       dfs_datanode_data_dir_perm, dfs_datanode_du_reserved,
                                       dfs_datanode_failed_volumes_tolerated, dfs_datanode_max_locked_memory,
-                                      dfs_datanode_max_xcievers, datanode_log_dir]
+                                      dfs_datanode_max_xcievers, datanode_log_dir, dfs_datanode_failed_volumes_tolerated]
+                    
                     for config in dn_config_list:
                         push_rcg_config(config)
                     update_service_config(service_name=service, api_config_items=dfs_replication)
@@ -1336,6 +1340,20 @@ def update_cluster_rcg_configuration(cluster_service_list):
                     create_role(rcg, rcg_roletype, service, cm_host_id, cm_hostname, 1)
                     create_role(rcg, rcg_roletype, service, nn_host_id, nn_hostname, 2)
                     create_role(rcg, rcg_roletype, service, snn_host_id, snn_hostname, 3)
+
+        if service == 'TEZ':
+            for rcg in role_config_group_list:
+                if rcg == 'TEZ-GATEWAY-BASE':
+                    p_rcg(rcg)
+                    rcg_roletype = 'GATEWAY'
+                    n = 0
+                    for host_id in worker_host_ids:
+                        create_role(rcg, rcg_roletype, service, host_id, worker_hostnames[n], (n + 1))
+                        n = n + 1
+                    create_role(rcg, rcg_roletype, service, snn_host_id, snn_hostname, (n + 1))
+                    create_role(rcg, rcg_roletype, service, nn_host_id, nn_hostname, (n + 2))
+                    create_role(rcg, rcg_roletype, service, cm_host_id, cm_hostname, (n + 3))
+
 
 
 def build_role_config_group_list(service_name):
@@ -2214,7 +2232,10 @@ if __name__ == '__main__':
             wait_status = wait_status + '*'
 
     print('Cluster Deployment options - High Availability: %s - Kerberos: %s' % (hdfs_ha, secure_cluster))
+    
+    # The entry point of all the config
     build_cloudera_cluster(cluster_primary_version)
+    
     if hdfs_ha is True:
         hdfs_ha_deployment_start = time.time()
         print('->Enabling HDFS HA')
