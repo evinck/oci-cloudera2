@@ -983,37 +983,36 @@ def update_cluster_rcg_configuration(cluster_service_list):
 
         if service == 'HIVE':
             for rcg in role_config_group_list:
-                if rcg == 'HIVE-HIVESERVER2-BASE':
-                    p_rcg(rcg)
-                    rcg_roletype = 'HIVESERVER2'
-                    if 'RANGER' in cluster_service_list:
-                        hiveserver2_enable_impersonation = [cm_client.ApiConfig(name='hiveserver2_enable_impersonation', 
-                                                                                value='false')]
-                    else:
-                        hiveserver2_enable_impersonation = [cm_client.ApiConfig(name='hiveserver2_enable_impersonation',
-                                                                                value='true')]
-
-                    hiveserver2_spark_driver_memory = [cm_client.ApiConfig(name='hiveserver2_spark_driver_memory',
-                                                                           value='11596411699')]
-                    hiveserver2_spark_executor_cores = [cm_client.ApiConfig(name='hiveserver2_spark_executor_cores',
-                                                                            value='4')]
-                    hiveserver2_spark_executor_memory = [cm_client.ApiConfig(name='hiveserver2_spark_executor_memory',
-                                                                             value='17230744780')]
-                    hiveserver2_spark_yarn_driver_memory_overhead = \
-                        [cm_client.ApiConfig(name='hiveserver2_spark_yarn_driver_memory_overhead',
-                                             value='1228')]
-                    hiveserver2_spark_yarn_executor_memory_overhead = \
-                        [cm_client.ApiConfig(name='hiveserver2_spark_yarn_executor_memory_overhead',
-                                             value='2899')]
-                    hs2_execution_engine = [cm_client.ApiConfig(name='hs2_execution_engine', value='spark')]
-                    hive2_config_list = [hiveserver2_enable_impersonation, hiveserver2_spark_driver_memory, 
-                                         hiveserver2_spark_executor_cores, 
-                                         hiveserver2_spark_yarn_driver_memory_overhead,
-                                         hiveserver2_spark_yarn_executor_memory_overhead,
-                                         hiveserver2_spark_executor_memory, hs2_execution_engine]
-                    for config in hive2_config_list:
-                        push_rcg_config(config)
-                    create_role(rcg, rcg_roletype, service, snn_host_id, snn_hostname, 1)
+                # if rcg == 'HIVE-HIVESERVER2-BASE':
+                #     p_rcg(rcg)
+                #     rcg_roletype = 'HIVESERVER2'
+                #     if 'RANGER' in cluster_service_list:
+                #         hiveserver2_enable_impersonation = [cm_client.ApiConfig(name='hiveserver2_enable_impersonation', 
+                #                                                                 value='false')]
+                #     else:
+                #         hiveserver2_enable_impersonation = [cm_client.ApiConfig(name='hiveserver2_enable_impersonation',
+                #                                                                 value='true')]
+                #     hiveserver2_spark_driver_memory = [cm_client.ApiConfig(name='hiveserver2_spark_driver_memory',
+                #                                                            value='11596411699')]
+                #     hiveserver2_spark_executor_cores = [cm_client.ApiConfig(name='hiveserver2_spark_executor_cores',
+                #                                                             value='4')]
+                #     hiveserver2_spark_executor_memory = [cm_client.ApiConfig(name='hiveserver2_spark_executor_memory',
+                #                                                              value='17230744780')]
+                #     hiveserver2_spark_yarn_driver_memory_overhead = \
+                #         [cm_client.ApiConfig(name='hiveserver2_spark_yarn_driver_memory_overhead',
+                #                              value='1228')]
+                #     hiveserver2_spark_yarn_executor_memory_overhead = \
+                #         [cm_client.ApiConfig(name='hiveserver2_spark_yarn_executor_memory_overhead',
+                #                              value='2899')]
+                #     hs2_execution_engine = [cm_client.ApiConfig(name='hs2_execution_engine', value='spark')]
+                #     hive2_config_list = [hiveserver2_enable_impersonation, hiveserver2_spark_driver_memory, 
+                #                          hiveserver2_spark_executor_cores, 
+                #                          hiveserver2_spark_yarn_driver_memory_overhead,
+                #                          hiveserver2_spark_yarn_executor_memory_overhead,
+                #                          hiveserver2_spark_executor_memory, hs2_execution_engine]
+                #     for config in hive2_config_list:
+                #         push_rcg_config(config)
+                #     create_role(rcg, rcg_roletype, service, snn_host_id, snn_hostname, 1)
 
                 if rcg == 'HIVE-HIVEMETASTORE-BASE':
                     p_rcg(rcg)
